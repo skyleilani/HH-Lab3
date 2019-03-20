@@ -69,20 +69,34 @@ def convert_raw_reading(RAW)
   return voltage
         
   
-
+def convert_voltage_to_temp(voltage):
+  input_volt = 5
+  resistor = 220
+  inp_and_resistor = 1100
+        
+  therm_resistance = inp_and_resistor - resistor * voltage 
+  therm_res = therm_resistance / voltage 
+        
+  print(therm_res)
+                
 
 configure_adc(bus)
 adc_reading = get_raw_adc_reading(bus)
   
-convert_raw_reading(adc_reading)
+voltage_reading = convert_raw_reading(adc_reading)
+
+convert_voltage_to_temp(voltage_reading)
+        
 
 if bin(adc_reading) >= 1000000000000000: 
-       print("The reading I'm getting is" + str(bin(adc_reading)) + "but...")
-       print("yknow... note that I'm changing this to zero...\n ...so it's zero now...") 
-       bin(adc_reading) = 0000000000000000
+  print("The reading I'm getting is" + str(bin(adc_reading)) + "but...")
+  print("yknow... note that I'm changing this to zero...\n ...so it's zero now...") 
+  bin(adc_reading) = 0000000000000000
         
-       else: 
+else: 
         
-        print(adc_reading)
+  print(adc_reading)
+        
+      
        
         
