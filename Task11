@@ -77,7 +77,7 @@ def convert_voltage_to_temp(voltage):
   therm_resistance = inp_and_resistor - resistor * voltage 
   therm_res = therm_resistance / voltage 
         
-  print(therm_res)
+  print("Your thermistor's resistance is..." + str(therm_res))
                 
 
 configure_adc(bus)
