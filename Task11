@@ -10,7 +10,7 @@ import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BOARD)
 
 DEVICE_ADDRESS = 0x48 # The address of the i2c device in hex without the r/w bit 
-CONFIG_REGISTER = 0x01
+CONFIG_REGISTER = 0x01 
 CONVERSION_REGISTER = 0x00 
 
 bus = smbus.SMBus(1) # connects to i2C channel 1 and GPIO i2C pins
@@ -21,7 +21,7 @@ bus = smbus.SMBus(1) # connects to i2C channel 1 and GPIO i2C pins
 
 def configure_adc(bus):
   
-  config_bytes = [ 0xC4, 0x83 ] # MSB, LSB in hex 
+  config_bytes = [ 0xC0, 0x83 ] # MSB, LSB in hex (0xC0's 0 expands the range of the voltage)
   bus.write_i2c_block_data(DEVICE_ADDRESS, CONFIG_REGISTER, config_bytes)
   
   
@@ -55,14 +55,17 @@ def get_raw_adc_reading(bus):
   
   return RAW
   
-  
-# convert_raw_reading(reading) - task 11 - takes raw ADC reading and converts to voltage 
-# Returns : raw_reading - ADC reading in Volts 
-# Param : reading - ADC's raw reading 
 
-def convert_raw_reading(RAW)
-     
-  voltage = 0.000076 * RAW 
+        
+def convert_raw_reading(RAW):
+        
+        """
+        convert_raw_reading(reading) - task 11 - takes raw ADC reading and converts to voltage 
+        Returns : raw_reading - ADC reading in Volts 
+        :param reading: ADC's raw reading 
+        """
+        
+  voltage = 0.0001875 * RAW 
   print("Voltage reading is... ")
   print(voltage)
      
