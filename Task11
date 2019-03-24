@@ -83,7 +83,7 @@ adc_reading = get_raw_adc_reading(bus)
 
 voltage_reading = convert_raw_reading(adc_reading)
 
-convert_voltage_to_temp(voltage_reading, 10000)
+convert_voltage_to_temp(voltage_reading, 10000) # if voltage is 0 print an error message and ask user to check wires 
 
 
 if bin(adc_reading) >= bin(32768): 
