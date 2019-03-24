@@ -82,6 +82,33 @@ def convert_voltage_to_temp(voltage, resistor):
         
     print("Your thermistor's resistance is..." + str(therm_res))
                 
+    first_temp = 6925 * therm_res ** - 0.622 
+    fahren_temp = first_temp * 1.8 + 32
+
+    print("Temperature is.." + str(fahren_temp) + "º fahrenheit") 
+
+def LED_control(temperature):
+  
+  while(temperature >= 20) and (temperature <=  55):
+
+    GPIO.setup(13, GPIO.OUT) 
+    GPIO.output(13, GPIO.HIGH) 
+  
+   
+
+  while(temperature >=  56) and (temperature <= 70):
+
+    GPIO.setup(15, GPIO.OUT)
+    GPIO.output(15, GPIO.HIGH) 
+
+  
+  
+  while(temperature  >=  71) and (temperature <= 80):
+    
+    GPIO.setup(16, GPIO.OUT)
+    GPIO.input(16, GPIO.HIGH) 
+  
+
 
 
 configure_adc(bus) 
@@ -103,5 +130,18 @@ if bin(adc_reading) >= bin(32768):
 else: 
         
   print(adc_reading)
-        
-      
+
+
+GPIO.setup(16, GPIO.OUT)
+GPIO.output(16, GPIO.HIGH) 
+
+GPIO.setup(13, GPIO.OUT) 
+GPIO.output(13, GPIO.HIGH) 
+
+GPIO.setup(15, GPIO.OUT)
+GPIO.output(15, GPIO.HIGH) 
+
+print(" Pin 15's reading: " + str(GPIO.input(15)) )
+print(" Pin 13's reading: " + str(GPIO.input(13)) )
+print(" Pin 16's reading: " + str(GPIO.input(16)) )
+
