@@ -1,4 +1,3 @@
-
 #!/usr/bin/python3
 # Josie Bunnell (Josephinebunnell@bennington.edu) ; Sky Leilani (skyleilani@bennington.edu) 
 # Date Created : 03.18.2019 
@@ -35,23 +34,25 @@ def get_raw_adc_reading(bus):
   raw_reading = bus.read_i2c_block_data(DEVICE_ADDRESS, CONVERSION_REGISTER)
   MSB = raw_reading[0] << 8 
   RAW = MSB + raw_reading[1]
+
   print("Least significant byte is... ")
   print(raw_reading[1])
   
-  print("LSB in hex is " + str(hex(raw_reading[1])) + "... \n")
-  print("LSB in binary is " + str(bin(raw_reading[1])) + "... \n")
+  print("in hex :  " + str(hex(raw_reading[1])) + "...")
+  print("in binary : " + str(bin(raw_reading[1])) + "... \n")
      
   
   print("Most significant byte is...")
   print(MSB)
   
-  print("MSB in hex is " + str(hex(MSB)) + "... \n")
-  print("MSB in binary is " + str(bin(MSB)) + "... \nn")
+  print("in hex : " + str(hex(MSB)) + "...")
+  print("in binary : " + str(bin(MSB)) + "... \n")
         
   print("The combined bytes are (MSB + LSB) ... ")
   print(RAW)
-  print("The combined bytes in hex are " + str(hex(RAW)) + "... \n")
-  print("and in binary, they're " + str(bin(RAW)) + "... \n")
+
+  print("in hex :  " + str(hex(RAW)) + "...")
+  print("in binary : " + str(bin(RAW)) + "... \n")
   
   return RAW
   
@@ -60,20 +61,26 @@ def get_raw_adc_reading(bus):
 def convert_raw_reading(RAW):
 
   voltage = 0.0001875 * RAW
-  print("Voltage reading is... ")
-  print(voltage)
+  print( "Voltage reading is... " )
+  print( str(voltage) + "... \n")
 
   return voltage
         
   
 def convert_voltage_to_temp(voltage, resistor):
-  input_volt = 5
-  inp_and_resistor = resistor * input_volt
+
+  if ( voltage <= 0.75 ):
+    print("I'm reading that your voltage is zero (Thermistor's resistance is being read weird), maybe check your wires and try again...")
+  
+  else: 
+
+    input_volt = 5
+    inp_and_resistor = resistor * input_volt
         
-  therm_resistance = inp_and_resistor - resistor * voltage 
-  therm_res = therm_resistance / voltage 
+    therm_resistance = inp_and_resistor - resistor * voltage 
+    therm_res = therm_resistance / voltage 
         
-  print("Your thermistor's resistance is..." + str(therm_res))
+    print("Your thermistor's resistance is..." + str(therm_res))
                 
 
 
@@ -83,17 +90,18 @@ adc_reading = get_raw_adc_reading(bus)
 
 voltage_reading = convert_raw_reading(adc_reading)
 
-convert_voltage_to_temp(voltage_reading, 10000) # if voltage is 0 print an error message and ask user to check wires 
-
+convert_voltage_to_temp(voltage_reading, 10000)
 
 if bin(adc_reading) >= bin(32768): 
   
-  print("The reading I'm getting is" + str(bin(adc_reading)) + "but...")
-  print("yknow... note that I'm changing this to zero...\n ...so it's zero now...") 
+  print("The reading I'm getting is " + str(bin(adc_reading)) + ", but it's more likely that it's 0, so I'm going to change it.")
+  
   adc_reading = bin(0000000000000000)
   print(adc_reading)
- 
-else: 
-  print(adc_reading) 
 
-  
+        
+else: 
+        
+  print(adc_reading)
+        
+      
