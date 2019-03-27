@@ -43,24 +43,24 @@ def get_raw_adc_reading(bus):
   MSB = raw_reading[0] << 8 
   RAW = MSB + raw_reading[1]
 
-  print("Least significant byte is... ")
-  print(raw_reading[1])
+#   print("Least significant byte is... ")
+#   print(raw_reading[1])
   
-  print("in hex :  " + str(hex(raw_reading[1])) + "...")
-  print("in binary : " + str(bin(raw_reading[1])) + "... \n")
+#   print("in hex :  " + str(hex(raw_reading[1])) + "...")
+#   print("in binary : " + str(bin(raw_reading[1])) + "... \n")
      
   
-  print("Most significant byte is...")
-  print(MSB)
+#   print("Most significant byte is...")
+#   print(MSB)
   
-  print("in hex : " + str(hex(MSB)) + "...")
-  print("in binary : " + str(bin(MSB)) + "... \n")
+#   print("in hex : " + str(hex(MSB)) + "...")
+#   print("in binary : " + str(bin(MSB)) + "... \n")
         
-  print("The combined bytes are (MSB + LSB) ... ")
-  print(RAW)
+#   print("The combined bytes are (MSB + LSB) ... ")
+#   print(RAW)
 
-  print("in hex :  " + str(hex(RAW)) + "...")
-  print("in binary : " + str(bin(RAW)) + "... \n")
+#   print("in hex :  " + str(hex(RAW)) + "...")
+#   print("in binary : " + str(bin(RAW)) + "... \n")
   
   return RAW
   
@@ -78,7 +78,8 @@ def convert_raw_reading(RAW):
 def convert_voltage_to_temp(voltage, resistor):
 
   if ( voltage <= 0.75 ):
-    print("I'm reading that your voltage is zero (Thermistor's resistance is being read weird), maybe check your wires and try again...")
+    x = 0
+   # print("I'm reading that your voltage is zero (Thermistor's resistance is being read weird), maybe check your wires and try again...")
   
   else: 
 
@@ -88,12 +89,12 @@ def convert_voltage_to_temp(voltage, resistor):
     therm_resistance = inp_and_resistor - resistor * voltage 
     therm_res = therm_resistance / voltage 
         
-    print("Your thermistor's resistance is..." + str(therm_res))
+   # print("Your thermistor's resistance is..." + str(therm_res))
                 
     first_temp = 6925 * therm_res ** - 0.622 
     fahren_temp = first_temp * 1.8 + 32
 
-    print("Temperature is.." + str(fahren_temp) + "º fahrenheit") 
+   # print("Temperature is.." + str(fahren_temp) + "º fahrenheit") 
     
     return fahren_temp
     
@@ -208,15 +209,15 @@ while True:
 
 if bin(adc_reading) >= bin(32768): 
   
-  print("The reading I'm getting is " + str(bin(adc_reading)) + ", but it's more likely that it's 0, so I'm going to change it.")
+  #print("The reading I'm getting is " + str(bin(adc_reading)) + ", but it's more likely that it's 0, so I'm going to change it.")
   
   adc_reading = bin(0000000000000000)
-  print(adc_reading)
+  #print(adc_reading)
 
         
 else: 
         
-  print(adc_reading)
+  #print(adc_reading)
   
 
 while True:  
