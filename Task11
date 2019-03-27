@@ -177,6 +177,6 @@ else:
         
   print(adc_reading)
   
-  
-LED_temp_to_blink(temperature_read)
+int_temp = int(temperature_read)  
+LED_temp_to_blink(int_temp)
 LED_control(temperature_read)
