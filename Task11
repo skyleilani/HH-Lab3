@@ -13,6 +13,8 @@ GPIO.setmode(GPIO.BOARD)
 GPIO.setup(13, GPIO.OUT)
 GPIO.setup(15, GPIO.OUT)
 GPIO.setup(16, GPIO.OUT)
+GPIO.setup(18, GPIO.OUT)
+GPIO.setup(22, GPIO.OUT)
 
 
 DEVICE_ADDRESS = 0x48 # The address of the i2c device in hex without the r/w bit 
@@ -98,42 +100,77 @@ def convert_voltage_to_temp(voltage, resistor):
     
 
 def LED_control(temperature):
-  
-  while(TRUE): 
-    
-    
-    
-    if(temperature >= float(20)) and (temperature <=  float(55)):
-    
-      GPIO.output(13, GPIO.HIGH) 
-      
-      GPIO.output(15, GPIO.LOW)
-      GPIO.output(16, GPIO.LOW)
-  
-   
+ while True: 
+ 
+ if(temperature >= float(20)) and (temperature <= float(55)):
+ 
+ GPIO.output(13, GPIO.HIGH) 
+ time.sleep (0.5)
+ GPIO.output(13, LOW)
+ GPIO.sleep(0.5)
 
-    elif(temperature >=  float(56)) and (temperature <= float(70)):
-      
-      GPIO.output(15, GPIO.HIGH)
-      
-      GPIO.output(13, GPIO.LOW)
-      GPIO.output(16, GPIO.LOW)
+ GPIO.output(15, GPIO.LOW)
+ GPIO.output(16, GPIO.LOW)
+ GPIO.output(18, GPIO.LOW)
+ GPIO.output(22, GPIO.LOW)
 
+ elif(temperature >= float(56)) and (temperature <= float(70)):
+ 
+ GPIO.output(15, GPIO.HIGH)
+ time.sleep(0.5)
+ GPIO.output(15, GPIO.LOW)
+ time.sleep(0.5)
+
+ GPIO.output(13, GPIO.LOW)
+ GPIO.output(16, GPIO.LOW)
+ GPIO.output(18, GPIO.LOW)
+ GPIO.output(22, GPIO.LOW)
+
+ elif(temperature >= float(71)) and (temperature <= float(80)):
+ 
+ GPIO.output(16, GPIO.HIGH)
+ time.sleep(0.5)
+ GPIO.output(16, GPIO.LOW)
+ time.sleep(0.5)
+
+ GPIO.output(13, GPIO.LOW)
+ GPIO.output(15, GPIO.LOW)
+ GPIO.output(18, GPIO.LOW)
+ GPIO.output(22, GPIO.LOW)
+
+ elif(temperature >= float(81)) and (temperature <= float(90)):
+ 
+ GPIO.output(18, GPIO.HIGH)
+ time.sleep(0.5)
+ GPIO.output(18, GPIO.LOW)
+ time.sleep(0.5)
+
+ GPIO.output(13, GPIO.LOW)
+ GPIO.output(15, GPIO.LOW)
+ GPIO.output(16, GPIO.LOW)
+ GPIO.output(22, GPIO.LOW)
+
+ elif(temperature >= float(91)) and (temperature <= float(100)):
+
+ GPIO.output(22, GPIO.HIGH)
+ time.sleep(0.5)
+ GPIO.output(22, GPIO.LOW)
+ time.sleep(0.5)
+
+ GPIO.output(13, GPIO.LOW)
+ GPIO.output(15, GPIO.LOW)
+ GPIO.output(16, GPIO.LOW)
+ GPIO.output(18, GPIO.LOW)
+
+ else: 
+ 
+ GPIO.output(13, GPIO.LOW) 
+ GPIO.output(15, GPIO.LOW) 
+ GPIO.output(16, GPIO.LOW) 
+ GPIO.output(18, GPIO.LOW)
+ GPIO.output(22, GPIO.LOW)
   
-    elif(temperature  >=  float(71)) and (temperature <= float(80)):
   
-       GPIO.output(16, GPIO.HIGH)
-    
-       GPIO.output(13, GPIO.LOW)
-       GPIO.output(15, GPIO.LOW)
-
-    
-    else: 
-    
-      GPIO.output(13, GPIO.HIGH) 
-      GPIO.output(15, GPIO.LOW) 
-      GPIO.output(16, GPIO.LOW) 
-
 def LED_temp_to_blink(temperature): 
   
   binary_temp = bin(temperature)[2:]
