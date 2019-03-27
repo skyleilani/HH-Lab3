@@ -9,6 +9,11 @@ import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BOARD)
 
+GPIO.setup(13, GPIO.OUT)
+GPIO.setup(15, GPIO.OUT)
+GPIO.setup(16, GPIO.OUT)
+
+
 DEVICE_ADDRESS = 0x48 # The address of the i2c device in hex without the r/w bit 
 CONFIG_REGISTER = 0x01 
 CONVERSION_REGISTER = 0x00 
@@ -86,38 +91,58 @@ def convert_voltage_to_temp(voltage, resistor):
     fahren_temp = first_temp * 1.8 + 32
 
     print("Temperature is.." + str(fahren_temp) + "º fahrenheit") 
+    
+    return fahren_temp
+    
+    
 
 def LED_control(temperature):
   
-  while(temperature >= 20) and (temperature <=  55):
-
-    GPIO.setup(13, GPIO.OUT) 
-    GPIO.output(13, GPIO.HIGH) 
+  while(TRUE): 
+    
+    
+    
+    if(temperature >= float(20)) and (temperature <=  float(55)):
+    
+      GPIO.output(13, GPIO.HIGH) 
+      
+      GPIO.output(15, GPIO.LOW)
+      GPIO.output(16, GPIO.LOW)
   
    
 
-  while(temperature >=  56) and (temperature <= 70):
-
-    GPIO.setup(15, GPIO.OUT)
-    GPIO.output(15, GPIO.HIGH) 
+    elif(temperature >=  float(56)) and (temperature <= float(70)):
+      
+      GPIO.output(15, GPIO.HIGH)
+      
+      GPIO.output(13, GPIO.LOW)
+      GPIO.output(16, GPIO.LOW)
 
   
+    elif(temperature  >=  float(71)) and (temperature <= float(80)):
   
-  while(temperature  >=  71) and (temperature <= 80):
+       GPIO.output(16, GPIO.HIGH)
     
-    GPIO.setup(16, GPIO.OUT)
-    GPIO.input(16, GPIO.HIGH) 
+       GPIO.output(13, GPIO.LOW)
+       GPIO.output(15, GPIO.LOW)
+
+    
+    else: 
+    
+      GPIO.output(13, GPIO.HIGH) 
+      GPIO.output(15, GPIO.LOW) 
+      GPIO.output(16, GPIO.LOW) 
+    
   
-
-
-
 configure_adc(bus) 
 
 adc_reading = get_raw_adc_reading(bus)
 
 voltage_reading = convert_raw_reading(adc_reading)
 
-convert_voltage_to_temp(voltage_reading, 10000)
+temperature_read = convert_voltage_to_temp(voltage_reading, 10000)
+print(temperature_read)
+
 
 if bin(adc_reading) >= bin(32768): 
   
@@ -131,17 +156,5 @@ else:
         
   print(adc_reading)
 
-
-GPIO.setup(16, GPIO.OUT)
-GPIO.output(16, GPIO.HIGH) 
-
-GPIO.setup(13, GPIO.OUT) 
-GPIO.output(13, GPIO.HIGH) 
-
-GPIO.setup(15, GPIO.OUT)
-GPIO.output(15, GPIO.HIGH) 
-
-print(" Pin 15's reading: " + str(GPIO.input(15)) )
-print(" Pin 13's reading: " + str(GPIO.input(13)) )
-print(" Pin 16's reading: " + str(GPIO.input(16)) )
+LED_control(temperature_read)
 
