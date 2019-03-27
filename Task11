@@ -1,566 +1,159 @@
-Last login: Tue Mar 26 20:30:51 on ttys001
-catlab11m:~ Student$ ssh pi@raspberrypi12.local
-Warning: Permanently added the ECDSA host key for IP address '10.10.47.29' to the list of known hosts.
-pi@raspberrypi12.local's password: 
-Linux raspberrypi12 4.9.59-v7+ #1047 SMP Sun Oct 29 12:19:23 GMT 2017 armv7l
-
-+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
-
-	THE THEORY
-
-		AND PRACTICE
-
-		OF
-
-	HARDWARE HACKING
-
-+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=+=
+#!/usr/bin/python3
+# Josie Bunnell (Josephinebunnell@bennington.edu) ; Sky Leilani (skyleilani@bennington.edu) 
+# Date Created : 03.18.2019 
+# 
 
 
-Last login: Wed Mar 27 13:00:03 2019 from fe80::8c3:f47:a78c:ab1b%eth0
-pi@raspberrypi12:~$ nano lab3.3
+import smbus 
+import RPi.GPIO as GPIO 
+
+GPIO.setmode(GPIO.BOARD)
+
+GPIO.setup(13, GPIO.OUT)
+GPIO.setup(15, GPIO.OUT)
+GPIO.setup(16, GPIO.OUT)
 
 
+DEVICE_ADDRESS = 0x48 # The address of the i2c device in hex without the r/w bit 
+CONFIG_REGISTER = 0x01 
+CONVERSION_REGISTER = 0x00 
 
+bus = smbus.SMBus(1) # connects to i2C channel 1 and GPIO i2C pins
 
+# configure_adc - task 9 -  
+# Returns - nothing
+# Param - bus : connection to i2C channel and GPIO i2C pins (Device) 
 
+def configure_adc(bus):
+  
+  config_bytes = [ 0xC0, 0x83 ] # MSB, LSB in hex (0xC0's 0 expands the range of the voltage)
+  bus.write_i2c_block_data(DEVICE_ADDRESS, CONFIG_REGISTER, config_bytes)
+  
+  
+# get_raw_adc_reading(my_bus) - task 10 - sets address pointer register (DEVICE_ADDRESS)
+# Returns : raw ADC reading 
+# Param : my_bus - smbus i2c object to write to 
 
+def get_raw_adc_reading(bus):
+  
+  raw_reading = bus.read_i2c_block_data(DEVICE_ADDRESS, CONVERSION_REGISTER)
+  MSB = raw_reading[0] << 8 
+  RAW = MSB + raw_reading[1]
 
+  print("Least significant byte is... ")
+  print(raw_reading[1])
+  
+  print("in hex :  " + str(hex(raw_reading[1])) + "...")
+  print("in binary : " + str(bin(raw_reading[1])) + "... \n")
+     
+  
+  print("Most significant byte is...")
+  print(MSB)
+  
+  print("in hex : " + str(hex(MSB)) + "...")
+  print("in binary : " + str(bin(MSB)) + "... \n")
+        
+  print("The combined bytes are (MSB + LSB) ... ")
+  print(RAW)
 
+  print("in hex :  " + str(hex(RAW)) + "...")
+  print("in binary : " + str(bin(RAW)) + "... \n")
+  
+  return RAW
+  
 
+        
+def convert_raw_reading(RAW):
 
+  voltage = 0.0001875 * RAW
+  print( "Voltage reading is... " )
+  print( str(voltage) + "... \n")
 
+  return voltage
+        
+  
+def convert_voltage_to_temp(voltage, resistor):
 
+  if ( voltage <= 0.75 ):
+    print("I'm reading that your voltage is zero (Thermistor's resistance is being read weird), maybe check your wires and try again...")
+  
+  else: 
 
+    input_volt = 5
+    inp_and_resistor = resistor * input_volt
+        
+    therm_resistance = inp_and_resistor - resistor * voltage 
+    therm_res = therm_resistance / voltage 
+        
+    print("Your thermistor's resistance is..." + str(therm_res))
+                
+    first_temp = 6925 * therm_res ** - 0.622 
+    fahren_temp = first_temp * 1.8 + 32
 
+    print("Temperature is.." + str(fahren_temp) + "º fahrenheit") 
+    
+    return fahren_temp
+    
+    
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-pi@raspberrypi12:~$ chmod 700 lab3.3
-pi@raspberrypi12:~$ ./lab3.3
-Least significant byte is... 
-0
-in hex :  0x0...
-in binary : 0b0... 
-
-Most significant byte is...
-0
-in hex : 0x0...
-in binary : 0b0... 
-
-The combined bytes are (MSB + LSB) ... 
-0
-in hex :  0x0...
-in binary : 0b0... 
-
-Voltage reading is... 
-0.0... 
-
-I'm reading that your voltage is zero (Thermistor's resistance is being read weird), maybe check your wires and try again...
-None
-0
-Traceback (most recent call last):
-  File "./lab3.3", line 190, in <module>
-    LED_control(temperature_read)
-  File "./lab3.3", line 99, in LED_control
+def LED_control(temperature):
+  
+  while(TRUE): 
+    
+    
+    
     if(temperature >= float(20)) and (temperature <=  float(55)):
-TypeError: unorderable types: NoneType() >= float()
-pi@raspberrypi12:~$ chmod 700 lab3.3
-pi@raspberrypi12:~$ ./lab3.3
-./lab3.3:12: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.3:13: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.3:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.3:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.3:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-10
-in hex :  0xa...
-in binary : 0b1010... 
-
-Most significant byte is...
-13312
-in hex : 0x3400...
-in binary : 0b11010000000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13322
-in hex :  0x340a...
-in binary : 0b11010000001010... 
-
-Voltage reading is... 
-2.497875... 
-
-Your thermistor's resistance is...10017.01446229295
-Temperature is..72.47930615262094º fahrenheit
-72.47930615262094
-The reading I'm getting is 0b11010000001010, but it's more likely that it's 0, so I'm going to change it.
-0b0
-^CTraceback (most recent call last):
-  File "./lab3.3", line 190, in <module>
-    LED_control(temperature_read)
-  File "./lab3.3", line 126, in LED_control
-    time.sleep(0.5)
-KeyboardInterrupt
-pi@raspberrypi12:~$ ./lab3.3
-./lab3.3:12: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.3:13: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.3:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.3:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.3:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-226
-in hex :  0xe2...
-in binary : 0b11100010... 
-
-Most significant byte is...
-15616
-in hex : 0x3d00...
-in binary : 0b11110100000000... 
-
-The combined bytes are (MSB + LSB) ... 
-15842
-in hex :  0x3de2...
-in binary : 0b11110111100010... 
-
-Voltage reading is... 
-2.970375... 
-
-Your thermistor's resistance is...6832.891469932246
-Temperature is..83.35328969282313º fahrenheit
-83.35328969282313
-The reading I'm getting is 0b11110111100010, but it's more likely that it's 0, so I'm going to change it.
-0b0
-^CTraceback (most recent call last):
-  File "./lab3.3", line 190, in <module>
-    LED_control(temperature_read)
-  File "./lab3.3", line 140, in LED_control
-    time.sleep(0.5)
-KeyboardInterrupt
-pi@raspberrypi12:~$ ./lab3.2
-./lab3.2:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.2:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.2:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.2:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.2:18: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-50
-in hex :  0x32...
-in binary : 0b110010... 
-
-Most significant byte is...
-13568
-in hex : 0x3500...
-in binary : 0b11010100000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13618
-in hex :  0x3532...
-in binary : 0b11010100110010... 
-
-Voltage reading is... 
-2.553375... 
-
-Your thermistor's resistance is...9581.925882410535
-Temperature is..73.61296266069722º fahrenheit
-73.61296266069722
-The reading I'm getting is 0b11010100110010, but it's more likely that it's 0, so I'm going to change it.
-0b0
-
- 
-
-
-
-
-
-^CTraceback (most recent call last):
-  File "./lab3.2", line 195, in <module>
-    LED_control(temperature_read)
-  File "./lab3.2", line 134, in LED_control
-    time.sleep(0.5)
-KeyboardInterrupt
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ ./lab3.2
-  File "./lab3.2", line 187
-    if char = 0:
-            ^
-SyntaxError: invalid syntax
-pi@raspberrypi12:~$ 
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ ./lab3.2
-./lab3.2:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.2:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.2:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.2:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.2:18: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-28
-in hex :  0x1c...
-in binary : 0b11100... 
-
-Most significant byte is...
-13824
-in hex : 0x3600...
-in binary : 0b11011000000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13852
-in hex :  0x361c...
-in binary : 0b11011000011100... 
-
-Voltage reading is... 
-2.59725... 
-
-Your thermistor's resistance is...9251.131003946482
-Temperature is..74.53232247329268º fahrenheit
-74.53232247329268
-The reading I'm getting is 0b11011000011100, but it's more likely that it's 0, so I'm going to change it.
-0b0
-^[[A^CTraceback (most recent call last):
-  File "./lab3.2", line 217, in <module>
-    LED_control(temperature_read)
-  File "./lab3.2", line 132, in LED_control
-    time.sleep(0.5)
-KeyboardInterrupt
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ ./lab3.2
-  File "./lab3.2", line 133
-    elif(temperature  >=  float(71)) and (temperature <= float(80)):
-                                                                   ^
-IndentationError: unindent does not match any outer indentation level
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ ./lab3.2
-./lab3.2:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.2:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.2:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.2:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.2:18: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-105
-in hex :  0x69...
-in binary : 0b1101001... 
-
-Most significant byte is...
-13824
-in hex : 0x3600...
-in binary : 0b11011000000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13929
-in hex :  0x3669...
-in binary : 0b11011001101001... 
-
-Voltage reading is... 
-2.6116875... 
-
-Your thermistor's resistance is...9144.710077296768
-Temperature is..74.83951835429201º fahrenheit
-74.83951835429201
-The reading I'm getting is 0b11011001101001, but it's more likely that it's 0, so I'm going to change it.
-0b0
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
-^[[A temp is between 71 and 80
- temp is between 71 and 80
-^CTraceback (most recent call last):
-  File "./lab3.2", line 226, in <module>
-    LED_control(temperature_read)
-  File "./lab3.2", line 138, in LED_control
-    time.sleep(0.5)
-KeyboardInterrupt
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ ./lab3.2
-./lab3.2:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.2:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.2:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.2:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.2:18: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-85
-in hex :  0x55...
-in binary : 0b1010101... 
-
-Most significant byte is...
-13824
-in hex : 0x3600...
-in binary : 0b11011000000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13909
-in hex :  0x3655...
-in binary : 0b11011001010101... 
-
-Voltage reading is... 
-2.6079375000000002... 
-
-Your thermistor's resistance is...9172.238598509357
-Temperature is..74.75950009053858º fahrenheit
-74.75950009053858
-The reading I'm getting is 0b11011001010101, but it's more likely that it's 0, so I'm going to change it.
-0b0
-Traceback (most recent call last):
-  File "./lab3.2", line 226, in <module>
-    LED_temp_to_blink(temperature_read)
-  File "./lab3.2", line 193, in LED_temp_to_blink
-    binary_temperature = bin(temperature)[2:]
-TypeError: 'float' object cannot be interpreted as an integer
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ ./lab3.2
-./lab3.2:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.2:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.2:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.2:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.2:18: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-105
-in hex :  0x69...
-in binary : 0b1101001... 
-
-Most significant byte is...
-13824
-in hex : 0x3600...
-in binary : 0b11011000000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13929
-in hex :  0x3669...
-in binary : 0b11011001101001... 
-
-Voltage reading is... 
-2.6116875... 
-
-Your thermistor's resistance is...9144.710077296768
-Temperature is..74.83951835429201º fahrenheit
-74.83951835429201
-The reading I'm getting is 0b11011001101001, but it's more likely that it's 0, so I'm going to change it.
-0b0
-^CTraceback (most recent call last):
-  File "./lab3.2", line 227, in <module>
-    LED_temp_to_blink(int_temp_read)
-  File "./lab3.2", line 208, in LED_temp_to_blink
-    time.sleep(1.0)
-KeyboardInterrupt
-pi@raspberrypi12:~$ ./lab3.2
-./lab3.2:14: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(13, GPIO.OUT)
-./lab3.2:15: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(15, GPIO.OUT)
-./lab3.2:16: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(16, GPIO.OUT)
-./lab3.2:17: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(18, GPIO.OUT)
-./lab3.2:18: RuntimeWarning: This channel is already in use, continuing anyway.  Use GPIO.setwarnings(False) to disable warnings.
-  GPIO.setup(22, GPIO.OUT)
-Least significant byte is... 
-18
-in hex :  0x12...
-in binary : 0b10010... 
-
-Most significant byte is...
-13824
-in hex : 0x3600...
-in binary : 0b11011000000000... 
-
-The combined bytes are (MSB + LSB) ... 
-13842
-in hex :  0x3612...
-in binary : 0b11011000010010... 
-
-Voltage reading is... 
-2.595375... 
-
-Your thermistor's resistance is...9265.038770890524
-Temperature is..74.49259939222648º fahrenheit
-74.49259939222648
-The reading I'm getting is 0b11011000010010, but it's more likely that it's 0, so I'm going to change it.
-0b0
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
- temp is between 71 and 80
-^CTraceback (most recent call last):
-  File "./lab3.2", line 228, in <module>
-    LED_control(temperature_read)
-  File "./lab3.2", line 136, in LED_control
-    time.sleep(0.5)
-KeyboardInterrupt
-pi@raspberrypi12:~$ exit()
-> ssh pi@raspberrypi02.local
--bash: syntax error near unexpected token `ssh'
-pi@raspberrypi12:~$ nano -w lab3.2
-pi@raspberrypi12:~$ nano -w lab3.2
-
-  GNU nano 2.7.4                                                                                                                                                                                                                         File: lab3.2                                                                                                                                                                                                                                    
-
-      print("TEMP IS BETWEEN 20 - 55")
+    
+      GPIO.output(13, GPIO.HIGH) 
+      
+      GPIO.output(15, GPIO.LOW)
+      GPIO.output(16, GPIO.LOW)
+  
+   
 
     elif(temperature >=  float(56)) and (temperature <= float(70)):
       
       GPIO.output(15, GPIO.HIGH)
-      time.sleep(0.5)
-      GPIO.output(15, GPIO.LOW)
-      time.sleep(0.5)
-
+      
       GPIO.output(13, GPIO.LOW)
       GPIO.output(16, GPIO.LOW)
-      GPIO.output(18, GPIO.LOW)
-      GPIO.output(22, GPIO.LOW)
-      print("TEMP IS BETWEEN 56 - 70")
-     
-     
+
+  
     elif(temperature  >=  float(71)) and (temperature <= float(80)):
   
        GPIO.output(16, GPIO.HIGH)
-       time.sleep(0.5)
-       GPIO.output(16, GPIO.LOW)
-       time.sleep(0.5)
-
+    
        GPIO.output(13, GPIO.LOW)
        GPIO.output(15, GPIO.LOW)
-       GPIO.output(18, GPIO.LOW)
-       GPIO.output(22, GPIO.LOW)
 
-       print(" temp is between 71 and 80")
-
-    elif(temperature >=  float(81)) and (temperature <= float(90)):
-  
-      GPIO.output(18, GPIO.HIGH)
-      time.sleep(0.5)
-      GPIO.output(18, GPIO.LOW)
-      time.sleep(0.5)
-
-      GPIO.output(13, GPIO.LOW)
-      GPIO.output(15, GPIO.LOW)
-      GPIO.output(16, GPIO.LOW)
-      GPIO.output(22, GPIO.LOW)
-      
-      print(" temp is between 81 and 90")
-
-    elif(temperature >= float(91)) and (temperature <= float(100)):
-
-      GPIO.output(22, GPIO.HIGH)
-      time.sleep(0.5)
-      GPIO.output(22, GPIO.LOW)
-      time.sleep(0.5)
-
-      GPIO.output(13, GPIO.LOW)
-      GPIO.output(15, GPIO.LOW)
-      GPIO.output(16, GPIO.LOW)
-      GPIO.output(18, GPIO.LOW)
-      print(" temp is between 91 - 100")
-
+    
     else: 
     
-      GPIO.output(13, GPIO.LOW) 
+      GPIO.output(13, GPIO.HIGH) 
       GPIO.output(15, GPIO.LOW) 
       GPIO.output(16, GPIO.LOW) 
-      GPIO.output(18, GPIO.LOW)
-      GPIO.output(22, GPIO.LOW)
+
+def LED_temp_to_blink(temperature): 
+  binary_temp = bin(temperature)[2:]
+  
+  for char in binary_temp:
+  
+    if int(char) == 0:
+    
+      GPIO.output(16, GPIO.HIGH)
+      time.sleep(3.0)
+      GPIO.output(16, GPIO.LOW)
+      time.sleep(1.0)
+  
+    elif int(char) == 1:
+    
+      GPIO.output(16, GPIO.LOW)
+      time.sleep(3.0)
+      GPIO.output(16, GPIO.HIGH)
+      time.sleep(1.0)
+      
+    else: 
+      print("....")
   
 configure_adc(bus) 
 
@@ -571,28 +164,6 @@ voltage_reading = convert_raw_reading(adc_reading)
 temperature_read = convert_voltage_to_temp(voltage_reading, 10000)
 print(temperature_read)
 
-def LED_temp_to_blink(temperature):
-  
-  binary_temperature = bin(temperature)[2:]
-  
-  for char in binary_temperature:
-    if int(char) == 0:
-      
-      GPIO.output(16, GPIO.HIGH)
-      time.sleep(3.0)
-      GPIO.output(16, GPIO.LOW)
-      time.sleep(1.0)
-    
-    elif int(char) == 1:
-      
-      GPIO.output(16, GPIO.LOW)
-      time.sleep(3.0)
-      GPIO.output(16, GPIO.HIGH) 
-      time.sleep(1.0)
-      
-    else:
-      print("......")
-    
 
 if bin(adc_reading) >= bin(32768): 
   
@@ -605,7 +176,7 @@ if bin(adc_reading) >= bin(32768):
 else: 
         
   print(adc_reading)
-
-int_temp_read = int(temperature_read)
-LED_temp_to_blink(int_temp_read)
+  
+  
+LED_temp_to_blink(temperature_read)
 LED_control(temperature_read)
