@@ -196,12 +196,14 @@ def LED_temp_to_blink(temperature):
   
 configure_adc(bus) 
 
-adc_reading = get_raw_adc_reading(bus)
 
-voltage_reading = convert_raw_reading(adc_reading)
+while True:
+  adc_reading = get_raw_adc_reading(bus)
 
-temperature_read = convert_voltage_to_temp(voltage_reading, 10000)
-print(temperature_read)
+  voltage_reading = convert_raw_reading(adc_reading)
+
+  temperature_read = convert_voltage_to_temp(voltage_reading, 10000)
+  print(temperature_read)
 
 
 if bin(adc_reading) >= bin(32768): 
@@ -216,6 +218,8 @@ else:
         
   print(adc_reading)
   
-int_temp = int(temperature_read)  
-LED_temp_to_blink(int_temp)
-LED_control(temperature_read)
+
+while True:  
+  int_temp = int(temperature_read)  
+  LED_temp_to_blink(int_temp)
+  LED_control(temperature_read)
