@@ -215,7 +215,7 @@ if bin(adc_reading) >= bin(32768):
   #print(adc_reading)
 
         
-else: 
+#else: 
         
   #print(adc_reading)
   
