@@ -196,17 +196,7 @@ def LED_temp_to_blink(temperature):
       print("....")
   
 
-if bin(adc_reading) >= bin(32768): 
-  
-  #print("The reading I'm getting is " + str(bin(adc_reading)) + ", but it's more likely that it's 0, so I'm going to change it.")
-  
-  adc_reading = bin(0000000000000000)
-  #print(adc_reading)
 
-        
-#else: 
-        
- # print(adc_reading)
 
 
 configure_adc(bus) 
@@ -222,11 +212,19 @@ while True:
 #   LED_temp_to_blink(int_temp)
 #   LED_control(temperature_read)
 #   print(temperature_read)
+    if bin(adc_reading) >= bin(32768): 
+  
+  #print("The reading I'm getting is " + str(bin(adc_reading)) + ", but it's more likely that it's 0, so I'm going to change it.")
+  
+      adc_reading = bin(0000000000000000)
+  #print(adc_reading)
 
-
-
-
+        
+#else: 
+        
+ # print(adc_reading)
 
   int_temp = int(temperature_read)  
   LED_temp_to_blink(int_temp)
   LED_control(temperature_read)
+  
