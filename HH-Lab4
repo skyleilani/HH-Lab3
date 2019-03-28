@@ -1,0 +1,22 @@
+#!/usr/bin/python3
+#
+# Josie Bunnell (josephinebunnell@bennington.edu ; Sky Leilani (skyleilani@bennington.edu)
+# 
+# 3.26.2019
+
+# import RPi.GPIO as GPIO
+# GPIO.setmode(GPIO.BOARD) 
+
+DEVICE_ADDRESS = 0x70
+CONFIG_REGISTER = 0x21
+DISPLAY_SETUP = 0x81
+
+import smbus
+bus = smbus.SMBus(1)
+
+
+def configure_LED_display: 
+  
+  bus.write_i2c_block_data(DEVICE_ADDRESS, CONFIG_REGISTER, DISPLAY_SETUP)
+
+ 
