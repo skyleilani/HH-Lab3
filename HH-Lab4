@@ -7,16 +7,22 @@
 # import RPi.GPIO as GPIO
 # GPIO.setmode(GPIO.BOARD) 
 
-DEVICE_ADDRESS = 0x70
-CONFIG_REGISTER = 0x21
-DISPLAY_SETUP = 0x81
-
 import smbus
 bus = smbus.SMBus(1)
 
 
-def configure_LED_display: 
-  
-  bus.write_i2c_block_data(DEVICE_ADDRESS, CONFIG_REGISTER, DISPLAY_SETUP)
+DEVICE_ADDRESS = 0x70
+CONFIG_REGISTER = 0x21
+DISPLAY_SETUP = 0x81
+DISPLAY_DATA = 0xF
 
+CONFIG_AND_DISPLAY = [0x21, 0x81]
+
+
+
+def main():
+  
+  bus.write_byte_data(DEVICE_ADDRESS, CONFIG_REGISTER, DISPLAY_DATA)
+  
  
+main()
