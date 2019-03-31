@@ -19,7 +19,7 @@ DISPLAY_SETUP = 0x81    # turns LED display ON and sets blinking frequency to {0
 
 DISPLAY_ADDRESS = 0x0      # (IS THIS KEY DATA ADDR POINTER??) 0x00 for 1st digit, 0x02 for 2nd digit, 0x04 for colon, 0x06 for 3rd digit, 0x08 for 4th digit
 
-DISPLAY_BYTES = {'first' : 0x0, 'second' : 0x02, 'colon' : 0x04, 'third' : 0x06, 'fourth' : 0x08}
+DISPLAY_BYTES = {'first' : 0x0, 'second' : 0x02, 'third' : 0x06, 'fourth' : 0x08}
 
 
 # Numbers and their corresponding binary code for representation on the display
@@ -95,50 +95,52 @@ def turn_on_display(bus):
 
 
 # display_data : lights up segments on specified digit location
-def display_data(bus, DIGIT_INDEX, display_order):
+def display_data(bus, DIGIT_INDEX, digits):
 
    digit = [DIGIT_INDEX]         # 1 in front to turn on decimal, 0 in front for off decimal
-   bus.write_i2c_block_data(SYSTEM_SETUP, DISPLAY_BYTES[display_order], digit)
+   bus.write_i2c_block_data(SYSTEM_SETUP, DISPLAY_BYTES[digits], digit)
 
 def temp_to_display(temperature_read):
    string_read = str(temperature_read)
 
    
-   for i in DISPLAY_BYTES:
-       for x in string_read[0:4]:
+   for x in string_read[0:5]:
+       print(string_read[0:5]
+       for i in DISPLAY_BYTES:
+            
 
-        if (x == '0'):
+            if (x == '0'):
 
-            display_data(bus, DIGIT_L[0], i)
-
-
-        elif (x == '1'):
-            display_data(bus, DIGIT_L[1], i)
+                display_data(bus, DIGIT_L[0], i)
 
 
-        elif(x == '2'):
-            display_data(bus, DIGIT_L[2],i)
+            elif (x == '1'):
+                display_data(bus, DIGIT_L[1], i)
 
-        elif(x == '3'):
-            display_data(bus, DIGIT_L[3], i)
 
-        elif (x == '4'):
-            display_data(bus, DIGIT_L[4], i)
+            elif(x == '2'):
+                display_data(bus, DIGIT_L[2], i)
 
-        elif(x == '5'):
-            display_data(bus, DIGIT_L[5], i)
+            elif(x == '3'):
+                display_data(bus, DIGIT_L[3], i)
 
-        elif(x == '6'):
-            display_data(bus, DIGIT_L[6], i)
+            elif (x == '4'):
+                display_data(bus, DIGIT_L[4], i)
 
-        elif(x == '7'):
-            display_data(bus, DIGIT_L[7], i)
+            elif(x == '5'):
+                display_data(bus, DIGIT_L[5], i)
 
-        elif (x == '8'):
-            display_data(bus, DIGIT_L[8], i)
+            elif(x == '6'):
+                display_data(bus, DIGIT_L[6], i)
 
-        elif(x == '9'):
-            display_data(bus, DIGIT_L[9], i)
+            elif(x == '7'):
+                display_data(bus, DIGIT_L[7], i)
+
+            elif (x == '8'):
+                display_data(bus, DIGIT_L[8], i)
+
+            elif(x == '9'):
+                display_data(bus, DIGIT_L[9], i)
 
      
 
@@ -151,6 +153,10 @@ voltage_reading = convert_raw_reading(adc_reading)
 
 temperature_read = convert_voltage_to_temp(voltage_reading, 10000)
 
+print(temperature_read)
+print(voltage_reading)
+
+temp_to_display(temperature_read)
 
 if bin(adc_reading) >= bin(32768):
   adc_reading = bin(0000000000000000)
