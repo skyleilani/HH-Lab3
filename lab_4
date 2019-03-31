@@ -19,7 +19,7 @@ DISPLAY_SETUP = 0x81    # turns LED display ON and sets blinking frequency to {0
 
 DISPLAY_ADDRESS = 0x0      # (IS THIS KEY DATA ADDR POINTER??) 0x00 for 1st digit, 0x02 for 2nd digit, 0x04 for colon, 0x06 for 3rd digit, 0x08 for 4th digit
 
-DISPLAY_BYTES = {i : 0x0, 'second' : 0x02, 'colon' : 0x04, 'third' : 0x06, 'fourth' : 0x08}
+DISPLAY_BYTES = {'first' : 0x0, 'second' : 0x02, 'colon' : 0x04, 'third' : 0x06, 'fourth' : 0x08}
 
 
 # Numbers and their corresponding binary code for representation on the display
@@ -103,8 +103,9 @@ def display_data(bus, DIGIT_INDEX, display_order):
 def temp_to_display(temperature_read):
    string_read = str(temperature_read)
 
-   for x in string_read[0:4]:
-       for i in DISPLAY_BYTES:
+   
+   for i in DISPLAY_BYTES:
+       for x in string_read[0:4]:
 
         if (x == '0'):
 
