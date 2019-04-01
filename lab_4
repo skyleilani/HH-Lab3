@@ -24,6 +24,8 @@ DISPLAY_BYTES = {'first' : 0x0, 'second' : 0x02, 'third' : 0x06, 'fourth' : 0x08
 
 # Numbers and their corresponding binary code for representation on the display
 
+digit_list = []
+
 DIGIT_L = {0 : 0b00111111,
            1 : 0b00110000,
            2 : 0b01011011,
@@ -95,51 +97,65 @@ def turn_on_display(bus):
 
 
 # display_data : lights up segments on specified digit location
-def display_data(bus, DIGIT_INDEX, digits):
+def display_data(bus, digits):
 
-   digit = [DIGIT_INDEX]         # 1 in front to turn on decimal, 0 in front for off decimal
-   bus.write_i2c_block_data(SYSTEM_SETUP, DISPLAY_BYTES[digits], digit)
+   # digit = [DIGIT_INDEX]         # 1 in front to turn on decimal, 0 in front for off decimal
+   bus.write_i2c_block_data(SYSTEM_SETUP, DISPLAY_BYTES[digits])
 
+def create_list(number, place):
+  
+  digit = number // 10**place % 10 
+  
+  digit_list.append(digit)
+  
+  
 def temp_to_display(temperature_read):
-   string_read = str(temperature_read)
-
-   
-   for x in string_read[0:5]:
-       print(string_read[0:5]
-       for i in DISPLAY_BYTES:
+   round_temp = round(temperature_read, 2)
+  
+   for digit in digit_list:
+    for bytes in DISPLAY_BYTES:
+       if digit == 1: 
+          
+  
+      while( i == 'first'):
+         if x == number:
+            display_data(bus, DIGIT_L[number])
             
-
-            if (x == '0'):
-
-                display_data(bus, DIGIT_L[0], i)
+            elif x == 1:
+               display_data(bus, DIGIT_L[1])
 
 
-            elif (x == '1'):
-                display_data(bus, DIGIT_L[1], i)
+         while (i == 'second'):
+            if x == 1:
+               display_data(bus, DIGIT_L[1])
 
 
-            elif(x == '2'):
-                display_data(bus, DIGIT_L[2], i)
+         while (i == 'third'):
+            if x == 2:
+               display_data(bus, DIGIT_L[2])
 
-            elif(x == '3'):
-                display_data(bus, DIGIT_L[3], i)
+         while (i == 'fourth'):
+            elif x == 3:
+               display_data(bus, DIGIT_L[3])
 
-            elif (x == '4'):
-                display_data(bus, DIGIT_L[4], i)
+         while (i == 'fifth'):
+            elif x == 4:
+               display_data(bus, DIGIT_L[4])
 
-            elif(x == '5'):
-                display_data(bus, DIGIT_L[5], i)
+         while ( i == 'sixth'):
+            elif x == 5:
+             display_data(bus, DIGIT_L[5])
 
-            elif(x == '6'):
-                display_data(bus, DIGIT_L[6], i)
+         elif x == 6:
+             display_data(bus, DIGIT_L[6])
 
-            elif(x == '7'):
-                display_data(bus, DIGIT_L[7], i)
+         elif x == 7:
+             display_data(bus, DIGIT_L[7], i)
 
-            elif (x == '8'):
-                display_data(bus, DIGIT_L[8], i)
+         elif x == 8:
+             display_data(bus, DIGIT_L[8], i)
 
-            elif(x == '9'):
+         elif x == 9:
                 display_data(bus, DIGIT_L[9], i)
 
      
