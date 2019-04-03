@@ -364,7 +364,7 @@ while True:
 
   print("Temperature is " + str(temperature_read) + "° Fahrenheit")
   
-  time.sleep(7.0)
+  time.sleep(5.0)
   
   
 
