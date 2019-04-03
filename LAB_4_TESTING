@@ -362,7 +362,7 @@ while True:
   
   TEMP_LIST = []
 
-  print(temperature_read)
+  print("Temperature is " + str(temperature_read) + "° Fahrenheit")
   
   time.sleep(7.0)
   
